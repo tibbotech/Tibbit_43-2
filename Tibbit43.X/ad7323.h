@@ -1,8 +1,10 @@
-/* 
- * File:   ad7323.h
- * Author: DAT
- *
- * Created on February 11, 2020, 10:39 AM
+/*
+ * Project: Tibbit #43-1
+ * File:    ad7323.h
+ * Author:  Dmitry Tarasov
+ * License: GPLv3
+ * Copyright (c) 2021. Tibbo Technology Inc. 
+ * SPDX-License-Identifier: GPL-3.0
  */
 
 #ifndef AD7323_H

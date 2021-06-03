@@ -1,8 +1,10 @@
 /*
- * File:   command.c
- * Author: DAT
- *
- * Created on 14 ?????? 2020 ?., 12:27
+ * Project: Tibbit #43-1
+ * File:    command.c
+ * Author:  Dmitry Tarasov
+ * License: GPLv3
+ * Copyright (c) 2021. Tibbo Technology Inc. 
+ * SPDX-License-Identifier: GPL-3.0
  */
 
 #include "command.h"
@@ -17,9 +19,6 @@ const char CMD_STR_READCHANNELSASCII[]          = "RA";
 const char CMD_STR_READCHANNELSHEX[]            = "RH";
 const char CMD_STR_RESETSETTINGSTOFACTORY[]     = "SF";
 const char CMD_STR_READSETTINGSFROMEEPROM[]     = "GE";
-#ifndef CMD_VERSION_EASY
-//const char CMD_STR_SELECTINPUTVOLTAGE[]         = "SV";
-#endif
 const char CMD_STR_SETSAMPLINGRATE[]            = "SR";
 const char CMD_STR_SELECTSAMPLINGMODE[]         = "SM";
 const char CMD_STR_ENABLECHANNELS[]             = "SC";
@@ -39,11 +38,8 @@ const char CMD_ANSWER_OK[]                      = "A";
 const char CMD_ANSWER_ERROR_SYNTAX[]            = "C";
 const char CMD_ANSWER_ERROR_OUTRANGE[]          = "O";
 const char CMD_ANSWER_ERROR_EXECUTION[]         = "F";
-#ifndef CMD_VERSION_EASY
+
 const char CMD_ANSWER_VERSION[]                 = "Tibbo Inc. Tibbit#43-2 FW1.2";
-#else
-const char CMD_ANSWER_VERSION[]                 = "Tibbo Inc. Tibbit#43-1 FW1.1";
-#endif
 
 typedef enum {
     TYPE_ERROR,
@@ -78,9 +74,6 @@ inline CMD_COMMAND cmdGetCommand(char* element)
     if (!strcmp(element, CMD_STR_READCHANNELSHEX))        return CMD_READCHANNELSHEX;
     if (!strcmp(element, CMD_STR_RESETSETTINGSTOFACTORY)) return CMD_RESETSETTINGSTOFACTORY;
     if (!strcmp(element, CMD_STR_READSETTINGSFROMEEPROM)) return CMD_READSETTINGSFROMEEPROM;
-#ifndef CMD_VERSION_EASY
-    //if (!strcmp(element, CMD_STR_SELECTINPUTVOLTAGE))     return CMD_SELECTINPUTVOLTAGE;
-#endif
     if (!strcmp(element, CMD_STR_SETSAMPLINGRATE))        return CMD_SETSAMPLINGRATE;
     if (!strcmp(element, CMD_STR_SELECTSAMPLINGMODE))     return CMD_SELECTSAMPLINGMODE;
     if (!strcmp(element, CMD_STR_ENABLECHANNELS))         return CMD_ENABLECHANNELS;
@@ -242,9 +235,8 @@ PARSE_RESULT cmdParse(void)
                     (cmdElementsNumber != 7) &&
                     (cmdElementsNumber != 9) &&
                     (cmdElementsNumber != 11)) return PARSE_SYNTAX;
-#ifndef CMD_VERSION_EASY
-                if ((cmdCommand != CMD_ENABLECHANNELS) &&
-                    //(cmdCommand != CMD_SELECTINPUTVOLTAGE) &&
+
+				if ((cmdCommand != CMD_ENABLECHANNELS) &&
                     (cmdCommand != CMD_SETSAMPLINGRATE) &&
                     (cmdCommand != CMD_SELECTSAMPLINGMODE) &&
                     (cmdCommand != CMD_SELECTDATAFORMAT) &&
@@ -256,24 +248,8 @@ PARSE_RESULT cmdParse(void)
                     (cmdCommand != CMD_SETAF) &&
                     (cmdCommand != CMD_SETBPF) &&
                     (cmdCommand != CMD_SETBNF)) return PARSE_SYNTAX;
-#else
-                if ((cmdCommand != CMD_ENABLECHANNELS) &&
-                    (cmdCommand != CMD_SETSAMPLINGRATE) &&
-                    (cmdCommand != CMD_SELECTSAMPLINGMODE) &&
-                    (cmdCommand != CMD_SELECTDATAFORMAT) &&
-                    (cmdCommand != CMD_READCHANNELSASCII) &&
-                    (cmdCommand != CMD_READCHANNELSHEX) &&
-                    (cmdCommand != CMD_SETA) &&
-                    (cmdCommand != CMD_SETBP) &&
-                    (cmdCommand != CMD_SETBN) &&
-                    (cmdCommand != CMD_SETAF) &&
-                    (cmdCommand != CMD_SETBPF) &&
-                    (cmdCommand != CMD_SETBNF)) return PARSE_SYNTAX;
-#endif
-#ifndef CMD_VERSION_EASY
-                //if ((cmdCommand == CMD_SELECTINPUTVOLTAGE) && (cmdElementsNumber > 1)) return false;
-#endif
-                if ((cmdCommand == CMD_SETSAMPLINGRATE) && (cmdElementsNumber > 1)) return PARSE_SYNTAX;
+
+				if ((cmdCommand == CMD_SETSAMPLINGRATE) && (cmdElementsNumber > 1)) return PARSE_SYNTAX;
                 if ((cmdCommand == CMD_SELECTSAMPLINGMODE) && (cmdElementsNumber > 1)) return PARSE_SYNTAX;
                 if ((cmdCommand == CMD_SELECTDATAFORMAT) && (cmdElementsNumber > 1)) return PARSE_SYNTAX;
                 if ((cmdCommand == CMD_SETA) && (cmdElementsNumber > 12)) return PARSE_SYNTAX;
@@ -285,9 +261,6 @@ PARSE_RESULT cmdParse(void)
 
                 cmdParams[cmdParamsNumber] = atoi(cmdElement);
                 
-#ifndef CMD_VERSION_EASY
-                //if ((cmdCommand == CMD_SELECTINPUTVOLTAGE) && ((cmdParams[cmdParamsNumber] > 4) || (cmdParams[cmdParamsNumber] < 0))) return false;
-#endif
                 if ((cmdCommand == CMD_SETSAMPLINGRATE) && ((cmdParams[cmdParamsNumber] < 1) || 
                     (cmdParams[cmdParamsNumber] > 1000))) return PARSE_OUTRANGE;
                 if ((cmdCommand == CMD_SELECTSAMPLINGMODE) && ((cmdParams[cmdParamsNumber] > 1) || (cmdParams[cmdParamsNumber] < 0))) return PARSE_OUTRANGE;
@@ -335,9 +308,6 @@ PARSE_RESULT cmdParse(void)
                 if ((cmdCommand == CMD_READCHANNELSHEX) && !((cmdElementsNumber == 2) || (cmdElementsNumber == 4) || (cmdElementsNumber == 6) || (cmdElementsNumber == 8))) return PARSE_SYNTAX;
                 if ((cmdCommand == CMD_RESETSETTINGSTOFACTORY) && (cmdElementsNumber > 1)) return PARSE_SYNTAX;
                 if ((cmdCommand == CMD_READSETTINGSFROMEEPROM) && (cmdElementsNumber > 1)) return PARSE_SYNTAX;
-#ifndef CMD_VERSION_EASY
-                //if ((cmdCommand == CMD_SELECTINPUTVOLTAGE) && (cmdElementsNumber != 2)) return false;
-#endif
                 if ((cmdCommand == CMD_SETSAMPLINGRATE) && (cmdElementsNumber != 2)) return PARSE_SYNTAX;
                 if ((cmdCommand == CMD_SELECTSAMPLINGMODE) && (cmdElementsNumber != 2)) return PARSE_SYNTAX;
                 if ((cmdCommand == CMD_ENABLECHANNELS) && !((cmdElementsNumber == 2) || (cmdElementsNumber == 4) || (cmdElementsNumber == 6) || (cmdElementsNumber == 8))) return PARSE_SYNTAX;
@@ -429,15 +399,6 @@ void cmdSendSettingsFrom(bool fromEEPROM) // true - from EEPROM, false - from RA
     EUSART_Write(CMD_STX);
     EUSART_Write(CMD_ANSW_OK);
     
-#ifndef CMD_VERSION_EASY
-    //EUSART_Write('S');
-    //EUSART_Write('V');
-    //if (fromEEPROM)
-    //    cmdSendInteger(eepromStoreConfig.eeprom_Voltage);
-    //else
-    //    cmdSendInteger(operateGetVoltage());
-    //EUSART_Write(';');
-#endif
     EUSART_Write('S');
     EUSART_Write('R');
     if (fromEEPROM)
@@ -605,19 +566,6 @@ void cmdDoCommand()
             }
             break;
             
-#ifndef CMD_VERSION_EASY
-/*      case CMD_SELECTINPUTVOLTAGE:                // 
-            if (operateGetMode() == OPERATE_COMMAND) {
-                if ((cmdParams[0] == OPERATE_V_AUTO) && (operateGetData() != OPERATE_DATA_ASCII)) {
-                    cmdSendAnswer((char*)CMD_ANSWER_ERROR);
-                } else {
-                    operateSetVoltage(cmdParams[0]);
-                    cmdSendAnswer((char*)CMD_ANSWER_OK);
-                }
-            }
-            break;  */
-#endif
-            
         case CMD_SETSAMPLINGRATE:                   // 
             if (operateGetMode() == OPERATE_COMMAND) {
                 operateSetRate(cmdParams[0]);
@@ -656,17 +604,8 @@ void cmdDoCommand()
             
         case CMD_SELECTDATAFORMAT:                  // 
             if (operateGetMode() == OPERATE_COMMAND) {
-#ifndef CMD_VERSION_EASY
-                //if ((cmdParams[0] != OPERATE_DATA_ASCII) && (operateGetVoltage() == OPERATE_V_AUTO)) {
-                //    cmdSendAnswer((char*)CMD_ANSWER_ERROR);
-                //} else {
-                    operateSetData(cmdParams[0]);
-                    cmdSendAnswer((char*)CMD_ANSWER_OK, false);
-                //}
-#else
-                operateSetData(cmdParams[0]);
-                cmdSendAnswer((char*)CMD_ANSWER_OK, false);
-#endif
+				operateSetData(cmdParams[0]);
+				cmdSendAnswer((char*)CMD_ANSWER_OK, false);
             }
             break;
             
@@ -687,9 +626,6 @@ void cmdDoCommand()
             if (operateGetMode() == OPERATE_COMMAND) {
                 operateSetSample(eepromStoreConfig.StoreV1.eeprom_SampleMode);
                 operateSetData(eepromStoreConfig.StoreV1.eeprom_DataMode);
-#ifndef CMD_VERSION_EASY
-                //operateSetVoltage(eepromStoreConfig.eeprom_Voltage);
-#endif
                 operateSetRate(eepromStoreConfig.StoreV1.eeprom_SampleRate);
                 operateSetChannels(eepromStoreConfig.StoreV1.eeprom_Channels);
                 for (uint8_t _i = 0; _i < 4; _i++)  {
